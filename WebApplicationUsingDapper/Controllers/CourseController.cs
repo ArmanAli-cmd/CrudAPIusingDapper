@@ -1,7 +1,9 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using System.Data.SqlClient;
 using WebApplicationUsingDapper.Domain.CourseAggregate;
+using WebApplicationUsingDapper.Domain.StudentAggregate;
 using WebApplicationUsingDapper.Model;
 
 namespace WebApplicationUsingDapper.Controllers
@@ -20,7 +22,16 @@ namespace WebApplicationUsingDapper.Controllers
         public async Task<IActionResult> GetAllCourse()
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            var courses = await connection.QueryAsync<Course>("SELECT * from Course;");
+            var courses = await connection.QueryAsync<Course>("SELECT * from course");
+            
+            foreach(var course in courses)
+            {
+                int id = course.CourseId;
+                var students = await connection.QueryAsync<String>("select StudentName from student where studentId in (SELECT StudentId from StudentCourse where CourseId = @Cid);", new {Cid = id});
+                
+                course.Students = students.ToList();
+            }
+
             return Ok(courses);
         }
 
@@ -29,6 +40,10 @@ namespace WebApplicationUsingDapper.Controllers
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             var course = await connection.QueryFirstAsync<Course>("SELECT * from course where CourseId = @id;", new {id = CourseId});
+         
+            var students = await connection.QueryAsync<String>("select StudentName from student where studentId in (SELECT StudentId from StudentCourse where CourseId = @Cid);", new { Cid = CourseId });
+            
+            course.Students = students.ToList();
             return Ok(course);
         }
 
