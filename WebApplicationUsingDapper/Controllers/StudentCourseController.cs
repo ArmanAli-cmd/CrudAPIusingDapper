@@ -17,7 +17,7 @@ namespace WebApplicationUsingDapper.Controllers
             _configure = configure;
         }
 
-        [HttpPost("CourseId,StudentId")]
+        [HttpPost("CourseId, StudentId")]
         public async Task<IActionResult> EnrolledCourse(int CourseId, int StudentId)
         {
             using var connection = new SqlConnection(_configure.GetConnectionString("DefaultConnection"));

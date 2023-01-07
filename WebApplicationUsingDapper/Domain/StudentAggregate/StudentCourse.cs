@@ -2,9 +2,9 @@
 {
     public class StudentCourse
     {
-        public int StudentId { get; set; }
-        public int CourseId { get; set; }
-        public int Price { get; set; }
-        public DateTime DateTime { get; set; }
+        public int StudentId {get; set;}
+        public int CourseId { get; set;}
+        public double Price { get; set;}
+        public DateTime DateTime { get; set;}
     }
 }
